@@ -10,4 +10,4 @@ require('dotenv').config();
   console.log(response);
 
   process.exit(0);
-})()
+})();

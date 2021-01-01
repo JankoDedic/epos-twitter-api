@@ -93,7 +93,6 @@ class TwitterAccount {
   }
 
   async request(method, query) {
-    // const endpointURL = 'https://api.twitter.com'
     const endpointURL = 'https://api.twitter.com' + query;
     const authHeader = this.oauth.toHeader(this.oauth.authorize({
       url: endpointURL,
