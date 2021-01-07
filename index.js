@@ -2,6 +2,8 @@ const TwitterAccount = require('./TwitterAccount');
 
 require('dotenv').config();
 
+console.log(process.argv.slice(2));
+
 (async function () {
   const account = new TwitterAccount();
   await account.login(process.env.TWITTER_API_KEY, process.env.TWITTER_API_SECRET);
