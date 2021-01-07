@@ -73,7 +73,7 @@ class TwitterAccount {
 
     try {
       this.oAuthAccessToken = JSON.parse(fs.readFileSync('oauth.json'));
-      return this;
+      return;
     } catch (e) {
       console.log('No OAuth access token! Proceed to login.');
     }
@@ -89,7 +89,7 @@ class TwitterAccount {
 
     fs.writeFileSync('oauth.json', JSON.stringify(this.oAuthAccessToken));
 
-    return this;
+    return;
   }
 
   async request(method, query) {
