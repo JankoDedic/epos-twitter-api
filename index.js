@@ -2,14 +2,28 @@ const TwitterAccount = require('./TwitterAccount');
 
 require('dotenv').config();
 
-console.log(process.argv.slice(2));
+const args = process.argv.slice(2);
 
 (async function () {
-  const account = new TwitterAccount();
-  await account.login(process.env.TWITTER_API_KEY, process.env.TWITTER_API_SECRET);
+  const account = new TwitterAccount(process.env.TWITTER_API_KEY, process.env.TWITTER_API_SECRET);
 
-  const response = await account.request('GET', '/2/tweets?ids=1344362530014158850&tweet.fields=lang,author_id&user.fields=created_at');
-  console.log(response);
+  var response;
+  switch (args[0]) {
+    case 'login':
+      await account.login();
+      break;
+    case 'home':
+      response = await account.request('GET', '/1.1/statuses/home_timeline.json');
+      console.log(response.map(tweet => tweet.text));
+      break;
+    case 'timeline':
+      response = await account.request('GET', `/1.1/statuses/user_timeline.json?screen_name=${args[1]}&count=5`)
+      console.log(response.map(tweet => tweet.text));
+      break;
+    default:
+      console.log('Unknown command!');
+      break;
+  }
 
   process.exit(0);
 })();

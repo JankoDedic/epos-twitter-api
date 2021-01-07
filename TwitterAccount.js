@@ -59,12 +59,7 @@ async function accessToken(oauth, token, verifier) {
 }
 
 class TwitterAccount {
-  constructor() {
-    this.oauth = undefined
-    this.oAuthAccessToken = undefined
-  }
-
-  async login(key, secret) {
+  constructor(key, secret) {
     this.oauth = OAuth({
       consumer: { key, secret },
       signature_method: 'HMAC-SHA1',
@@ -73,11 +68,12 @@ class TwitterAccount {
 
     try {
       this.oAuthAccessToken = JSON.parse(fs.readFileSync('oauth.json'));
-      return;
     } catch (e) {
-      console.log('No OAuth access token! Proceed to login.');
+      this.oAuthAccessToken = undefined;
     }
+  }
 
+  async login() {
     const oAuthRequestToken = await requestToken(this.oauth);
 
     const authorizationURL = new URL('https://api.twitter.com/oauth/authorize');
@@ -88,11 +84,14 @@ class TwitterAccount {
     this.oAuthAccessToken = await accessToken(this.oauth, oAuthRequestToken, pin.trim());
 
     fs.writeFileSync('oauth.json', JSON.stringify(this.oAuthAccessToken));
-
-    return;
   }
 
   async request(method, query) {
+    if (!this.oAuthAccessToken) {
+      console.error('You are not logged in!');
+      process.exit(1);
+    }
+
     const endpointURL = 'https://api.twitter.com' + query;
     const authHeader = this.oauth.toHeader(this.oauth.authorize({
       url: endpointURL,
