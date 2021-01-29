@@ -104,7 +104,8 @@ class TwitterAccount {
     const response = await got(endpointURL, {
       headers: {
         Authorization: authHeader['Authorization']
-      }
+      },
+      method: method
     });
 
     if (!response.body) {
